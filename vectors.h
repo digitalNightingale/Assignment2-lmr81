@@ -1,5 +1,4 @@
-//enter the necessary includes - hint 3 different includes needed - 
-//google for which includes need to be added for the C functions used
+//enter the necessary includes - hint 3 different includes needed - google for which includes need to be added for the C functions used
 #include <stdio.h>
 #include <stdlib.h>
 #include <math.h>

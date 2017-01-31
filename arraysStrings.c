@@ -43,6 +43,7 @@ void* joinrev_generic(void* arrayA, void* arrayB, size_t theTypeSize, size_t the
 	
 	char *left = (char*) arrayB, *right = (char*)arrayB + (theSizeOfB-1) * theTypeSize;
 	char temp[theTypeSize];
+	
 	while (left < right) {	
 		memcpy(temp, right, theTypeSize);
 		memmove(right, left, theTypeSize);
@@ -50,9 +51,10 @@ void* joinrev_generic(void* arrayA, void* arrayB, size_t theTypeSize, size_t the
 		left += theTypeSize;
 		right -= theTypeSize;
 	}
-	int *arrayC = malloc((theSizeOfA + theSizeOfB) * theTypeSize);
+	
+	void *arrayC = malloc((theSizeOfA + theSizeOfB) * theTypeSize);
 	memcpy(arrayC, arrayA, theSizeOfA * theTypeSize);
-    memcpy((char*)arrayC + theSizeOfA * theTypeSize, arrayB, theSizeOfB * theTypeSize);
+    memcpy(arrayC + theSizeOfA * theTypeSize, arrayB, theSizeOfB * theTypeSize);
     
 	return arrayC;
 }
@@ -87,22 +89,39 @@ int readTextAddBinary(char* theFileNameTxt, char* theFileNameBin) {
 		fprintf(stderr, "Error! Unable to open the file\n");
 		return 1;
 	}
-	
+	int ch = 0;
+	int lines = 0;
+	while (!feof(fileIn)) {
+		ch = fgetc(fileIn);
+		if (ch == '\n') {
+			lines++;
+		}
+	}
+	rewind(fileIn);
+	//printf("%d\n",lines);
+	lines *= 10;
+	//printf("%d",lines);
+
     if (fileIn != NULL) {
+		
 		double atof(const char *str);
 		char line[BUFSIZ]; //space to read a line into
-        char data[6][100];
+		//printf("%d\n",BUFSIZ); // BUFSIZ is declared in stdio.h // 1224 
+		
+        char data[6][lines];
+
         //reading each line
         while (fgets(line, sizeof(line), fileIn) != NULL) {
             
-            size_t i = 0, size;
+            size_t i = 0;
             char *token = line;
 			//printf("The line of the file\n");
             //fputs(line, stdout); //prints whole line
+
             for (;;) {
-				size_t len = strcspn(token, " "); //search for delim
-                sprintf(data[i], "%.*s", (int)len, token);
-                token += len; //advancing pointer
+				int vLen = strcspn(token, " "); //search for delim
+                sprintf(data[i], "%.*s", vLen, token);
+                token += vLen; //advancing pointer
                 if (*token == '\n') {
                     break; //advancing to terminating null char
                 }
@@ -111,21 +130,17 @@ int readTextAddBinary(char* theFileNameTxt, char* theFileNameBin) {
                     break;
                 }
             }
-            for (size = i, i = 0; i < size; ++i) {
-                //printf("data[%d] = %s\n", (int)i, data[i]);
-                float num = atof(data[i]); //changing the data to float
-            } 
+            
             vector v1 = vector_init(atof(data[0]), atof(data[1]), atof(data[2]));
             vector v2 = vector_init(atof(data[3]), atof(data[4]), atof(data[5]));
-            //printf("------The 1st vector is-------\n");
+            //printf("\n------The 1st vector is-------\n");
 			//vector_print(v1);
 			//printf("------The 2nd vector is-----\n");
 			//vector_print(v2);
 			vector v3 = vector_add(v1, v2);
 			//printf("\n------Added Together------\n");
 			//vector_print(v3);
-
-			vect v;	
+			
 			vector *vPointer;
 			vPointer = &v3;
 			//printf("%f%f%f%f", vPointer->x, vPointer->y, vPointer->z, vPointer->length);
@@ -172,7 +187,7 @@ int readBinaryNormText(char* theFileNameBin, char* theFileNameTxt) {
 	}
 	
 	//printf("\nData from file:\n");
-	vect v;
+	vector v;
 	
 	while (1) {
 		fread(&v, sizeof(v), 1, fileIn);
@@ -236,8 +251,7 @@ int readNormTextWriteNormBinary(char* theFileNameTxt, char* theFileNameBin) {
 	if(!fileIn){
 		fprintf(stderr, "Error! Unable to open the file\n");
 		return 1;
-	} 
-	
+	} 	
 		
 	char *buffer = NULL;
 	int strLen, readLen; 
@@ -261,7 +275,7 @@ int readNormTextWriteNormBinary(char* theFileNameTxt, char* theFileNameBin) {
 	}
     //puts(buffer); //print out the file
        
-	const char s[2] = "\t"; //for findint the tabs
+	const char s[2] = "\t"; //for finding the tabs
 	char *token;
 	token = strtok(buffer, s); //get the first token
 
@@ -307,8 +321,8 @@ int wc(char* theFileNameTxt) {
 	printf("\n\n*** Bonus ***\n");
 	
 	int lineCount = 0;
-	int wordCount = 0;
 	int charCount = 0;
+	int wordCount;
 	int boolean;
 	int count;
 	
@@ -317,6 +331,14 @@ int wc(char* theFileNameTxt) {
 		fprintf(stderr, "Error! Unable to open the file\n");
 		return 1;
 	}
+
+    fseek(fileIn, 0, SEEK_END);
+    if (ftell(fileIn) == 0){
+        wordCount = 0;
+    } else {
+		wordCount = 1;
+	}
+	rewind(fileIn);
     
     while ((count = fgetc(fileIn)) != EOF) {
 		charCount++;
