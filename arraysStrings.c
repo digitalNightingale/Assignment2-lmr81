@@ -318,7 +318,7 @@ int readNormTextWriteNormBinary(char* theFileNameTxt, char* theFileNameBin) {
 	
 int wc(char* theFileNameTxt) {
 	
-	printf("\n\n*** Bonus ***\n");
+	printf("\n\n*** Bonus ***\n\n");
 	
 	int lineCount = 0;
 	int charCount = 0;
@@ -355,8 +355,7 @@ int wc(char* theFileNameTxt) {
 		}
 	}	
 	
-	printf("\nThe %s file stats are:\n", theFileNameTxt);
-	printf("\nNumber of lines: %d\nNumber of words: %d\nNumber of characters: %d", lineCount, wordCount, charCount);
+	printf("   %d  %d %d %s", lineCount, wordCount, charCount, theFileNameTxt);
 	
 	fclose(fileIn);
 	return 0;

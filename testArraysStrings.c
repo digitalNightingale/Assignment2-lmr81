@@ -63,7 +63,7 @@ int main(){
 	}
 
 
-	printf("\n\n\n*** End of program! ***\n\n\n");
+	printf("\n\n*** End of program! ***\n\n\n");
 	
 	if(c) free(c);
 	if(vcs) free	(vcs);
