@@ -19,7 +19,7 @@ char* joinrev(char *a, char *b){
 
 	char *c;
 	c = malloc(sizeof(char) * (strlen(a) + strlen(reversedB) + 1));
-	*c = '\0';
+	*c = '\0'; //have to put the '\0'
 
 	strcat(c,a);
 	strcat(c,reversedB);
@@ -91,6 +91,7 @@ int readTextAddBinary(char* theFileNameTxt, char* theFileNameBin) {
 	}
 	int ch = 0;
 	int lines = 0;
+	//getting the line count of the file
 	while (!feof(fileIn)) {
 		ch = fgetc(fileIn);
 		if (ch == '\n') {
@@ -104,8 +105,7 @@ int readTextAddBinary(char* theFileNameTxt, char* theFileNameBin) {
 
     if (fileIn != NULL) {
 		
-		double atof(const char *str);
-		char line[BUFSIZ]; //space to read a line into
+		char line[BUFSIZ]; //enuff space to read a line into
 		//printf("%d\n",BUFSIZ); // BUFSIZ is declared in stdio.h // 1224 
 		
         char data[6][lines];
@@ -125,7 +125,7 @@ int readTextAddBinary(char* theFileNameTxt, char* theFileNameBin) {
                 if (*token == '\n') {
                     break; //advancing to terminating null char
                 }
-                ++token; //skip to the delim
+                ++token; //skiping to the delim
                 if (++i >= sizeof(data) / sizeof(*data)) {
                     break;
                 }
@@ -146,7 +146,7 @@ int readTextAddBinary(char* theFileNameTxt, char* theFileNameBin) {
 			//printf("%f%f%f%f", vPointer->x, vPointer->y, vPointer->z, vPointer->length);
 			
 			if (fileOut != NULL) {
-				fwrite(vPointer, 1, 16, fileOut); //writing to bin file
+				fwrite(vPointer, 1, 16, fileOut); //writing to bin file, one vector at a time
 			}
 			if (ferror(fileOut)){
 				fprintf(stderr, "Could not write to the file\n");
@@ -263,8 +263,8 @@ int readNormTextWriteNormBinary(char* theFileNameTxt, char* theFileNameBin) {
 		rewind(fileIn);
 
 		//allocating a string to hold all data
-		buffer = (char*) malloc(sizeof(char) * (strLen + 1));
-		readLen = fread(buffer, sizeof(char), strLen, fileIn);
+		buffer = (char*) malloc(strLen + 1);
+		readLen = fread(buffer, 1, strLen, fileIn);
 		buffer[strLen] = '\0';
 
 		if (strLen != readLen) {
@@ -273,7 +273,6 @@ int readNormTextWriteNormBinary(char* theFileNameTxt, char* theFileNameBin) {
 			buffer = NULL;
 		}
 	}
-    //puts(buffer); //print out the file
        
 	const char s[2] = "\t"; //for finding the tabs
 	char *token;
@@ -290,13 +289,13 @@ int readNormTextWriteNormBinary(char* theFileNameTxt, char* theFileNameBin) {
 		//printf("%f", data); //print data
 		
 		if (fileOut != NULL) {
-			fwrite(ftemp, 1, 4, fileOut);
+			fwrite(ftemp, 1, 4, fileOut); //writing to file
 		}
 		if (ferror(fileOut)){
 			fprintf(stderr, "Could not write to the file\n");
 			return 1;
 		}
-		token = strtok(NULL, s);
+		token = strtok(NULL, s); //first token of line set to null
 	} 
 	fclose(fileIn);
 	fclose(fileOut);
@@ -357,6 +356,9 @@ int wc(char* theFileNameTxt) {
 	
 	printf("   %d  %d %d %s", lineCount, wordCount, charCount, theFileNameTxt);
 	
+	//formating for my mac output is different than windows output format
+	
+	//printf("       %d      %d     %d %s", lineCount, wordCount, charCount, theFileNameTxt);
 	fclose(fileIn);
 	return 0;
 }
